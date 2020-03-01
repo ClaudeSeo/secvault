@@ -64,9 +64,9 @@ func printSecret(secret map[string]string) {
 	}
 }
 
-func Get(secretId string, outputType string) {
-	if secretId == "" {
-		log.Fatal("secretId is required. Set --secret-id flag.")
+func Get(secretName string, outputType string) {
+	if secretName == "" {
+		log.Fatal("secretName is required. Set --secret-name flag.")
 	}
 
 	if outputType != "" &&
@@ -76,28 +76,28 @@ func Get(secretId string, outputType string) {
 		log.Fatal("outputType is not allowd. [" + outputType + "]")
 	}
 
-	describe := aws.DescribeSecret(secretId)
+	describe := aws.DescribeSecret(secretName)
 	if describe == nil {
 		log.Fatal("SecretsManager not found")
 	}
 
-	var secretName string
+	var secName string
 	if describe.TagName != "" {
-		secretName = describe.TagName
+		secName = describe.TagName
 	} else {
-		secretName = describe.SecretName
+		secName = describe.SecretName
 	}
 
-	secret := aws.GetSecret(secretId)
+	secret := aws.GetSecret(secretName)
 	switch outputType {
 	case "kubernetes":
-		makeKubernetesSecret(secretName, secret)
+		makeKubernetesSecret(secName, secret)
 		break
 	case "json":
-		makeJson(secretName, secret)
+		makeJson(secName, secret)
 		break
 	case "dotenv":
-		makeDotEnv(secretName, secret)
+		makeDotEnv(secName, secret)
 		break
 	default:
 		printSecret(secret)

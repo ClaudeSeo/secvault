@@ -12,13 +12,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
-type DescribeSecretOutput struct {
+type Secret struct {
 	SecretName string
 	TagName    string
 	ARN        string
 }
 
-func DescribeSecret(secretId string) *DescribeSecretOutput {
+func DescribeSecret(secretId string) *Secret {
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
 		log.Fatal("Unable to load SDK Config, " + err.Error())
@@ -47,7 +47,7 @@ func DescribeSecret(secretId string) *DescribeSecretOutput {
 		return nil
 	}
 
-	output := &DescribeSecretOutput{
+	output := &Secret{
 		SecretName: *result.Name,
 		ARN:        *result.ARN,
 	}
@@ -99,4 +99,38 @@ func GetSecret(secretId string) map[string]string {
 	secretMap := map[string]string{}
 	json.Unmarshal([]byte(*result.SecretString), &secretMap)
 	return secretMap
+}
+
+func ListSecret() []Secret {
+	cfg, err := external.LoadDefaultAWSConfig()
+	if err != nil {
+		log.Fatal("Unable to load SDK Config, " + err.Error())
+	}
+
+	svc := secretsmanager.New(cfg)
+	payload := secretsmanager.ListSecretsInput{}
+
+	req := svc.ListSecretsRequest(&payload)
+	result, err := req.Send(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	var secrets []Secret
+	for _, s := range result.SecretList {
+		sec := &Secret{
+			SecretName: *s.Name,
+			ARN:        *s.ARN,
+		}
+
+		for _, tag := range s.Tags {
+			if *tag.Key == "SecretName" {
+				sec.TagName = *tag.Value
+			}
+		}
+
+		secrets = append(secrets, *sec)
+	}
+
+	return secrets
 }
