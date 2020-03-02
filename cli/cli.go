@@ -16,7 +16,7 @@ func Initialize(info *Info) {
 	var outputType string
 
 	app := cli.NewApp()
-	app.Name = "secvalut"
+	app.Name = "secvault"
 	app.Version = info.Version
 	app.Usage = "simple cli tool to easily manage sensitive environment variable using AWS Secrets Manager"
 	app.Authors = []*cli.Author{

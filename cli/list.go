@@ -4,7 +4,7 @@ import (
 	"fmt"
     "context"
 
-	"github.com/claudeseo/secvalut/internal/aws"
+	"github.com/claudeseo/secvault/internal/aws"
 )
 
 func List() {

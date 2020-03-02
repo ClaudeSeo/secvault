@@ -1,4 +1,4 @@
-module github.com/claudeseo/secvalut
+module github.com/claudeseo/secvault
 
 go 1.13
 
