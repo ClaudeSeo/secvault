@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
-    "context"
 
 	"github.com/claudeseo/secvault/internal/aws"
 )
@@ -77,8 +77,8 @@ func Get(secretName string, outputType string) {
 		log.Fatal("outputType is not allowd. [" + outputType + "]")
 	}
 
-    c := aws.New()
-    describe := c.DescribeSecret(context.Background(), secretName)
+	c := aws.New()
+	describe := c.DescribeSecret(context.Background(), secretName)
 	if describe == nil {
 		log.Fatal("SecretsManager not found")
 	}
