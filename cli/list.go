@@ -2,12 +2,14 @@ package cli
 
 import (
 	"fmt"
+    "context"
 
 	"github.com/claudeseo/secvalut/internal/aws"
 )
 
 func List() {
-	secrets := aws.ListSecret()
+    c := aws.New()
+	secrets := c.ListSecrets(context.Background())
 	if len(secrets) == 0 {
 		fmt.Println("Not found secrets in AWS Secrets Manager")
 		return

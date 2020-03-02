@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+    "context"
 
 	"github.com/claudeseo/secvalut/internal/aws"
 )
@@ -76,7 +77,8 @@ func Get(secretName string, outputType string) {
 		log.Fatal("outputType is not allowd. [" + outputType + "]")
 	}
 
-	describe := aws.DescribeSecret(secretName)
+    c := aws.New()
+    describe := c.DescribeSecret(context.Background(), secretName)
 	if describe == nil {
 		log.Fatal("SecretsManager not found")
 	}
@@ -88,7 +90,7 @@ func Get(secretName string, outputType string) {
 		secName = describe.SecretName
 	}
 
-	secret := aws.GetSecret(secretName)
+	secret := c.GetSecret(context.Background(), secretName)
 	switch outputType {
 	case "kubernetes":
 		makeKubernetesSecret(secName, secret)
