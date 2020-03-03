@@ -16,12 +16,6 @@ type Secret struct {
 	ARN        string
 }
 
-type SecretsAPI interface {
-	DescribeSecret(ctx context.Context, secretId string) *Secret
-	GetSecret(ctx context.Context, secretId string) map[string]string
-	ListSecrets(ctx context.Context) []Secret
-}
-
 func (c *Cloud) DescribeSecret(ctx context.Context, secretId string) *Secret {
 	payload := secretsmanager.DescribeSecretInput{
 		SecretId: aws.String(secretId),
