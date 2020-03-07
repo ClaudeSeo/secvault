@@ -93,9 +93,9 @@ func Get(secretName string, outputType string) {
 	}
 
 	c := aws.New()
-	describe := c.DescribeSecret(context.Background(), secretName)
-	if describe == nil {
-		log.Fatal("SecretsManager not found")
+	describe, err := c.DescribeSecret(context.Background(), secretName)
+	if err != nil {
+		log.Fatalf("Unable to find the %s secrets\nError: %s", secretName, err.Error())
 	}
 
 	var secName string
@@ -105,7 +105,10 @@ func Get(secretName string, outputType string) {
 		secName = describe.SecretName
 	}
 
-	secret := c.GetSecret(context.Background(), secretName)
+	secret, err := c.GetSecret(context.Background(), secretName)
+	if err != nil {
+		log.Fatalf("Unable to find the %s secrets\nError: %s", secretName, err.Error())
+	}
 	switch outputType {
 	case "kubernetes":
 		makeKubernetesSecret(secName, secret)

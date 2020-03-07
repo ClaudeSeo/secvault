@@ -34,7 +34,7 @@ func Put(secretName string, file string) {
 	}
 
 	c := aws.New()
-	secrets := c.DescribeSecret(context.Background(), secretName)
+	secrets, _ := c.DescribeSecret(context.Background(), secretName)
 	if secrets == nil {
 		c.CreateSecret(context.Background(), secretName)
 	}
