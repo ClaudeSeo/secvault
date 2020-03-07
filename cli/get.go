@@ -8,7 +8,20 @@ import (
 	"os"
 
 	"github.com/claudeseo/secvault/internal/aws"
+	"gopkg.in/yaml.v2"
 )
+
+type kubernetesMetaData struct {
+	Name string `yaml:"name"`
+}
+
+type KubernetesResource struct {
+	ApiVersion string             `yaml:"apiVersion"`
+	Kind       string             `yaml:"kind"`
+	Metadata   kubernetesMetaData `yaml:"metadata"`
+	Type       string             `yaml:"type"`
+	StringData map[string]string  `yaml:"stringData"`
+}
 
 func makeFile(fileName string, data string) {
 	f, err := os.Create("./" + fileName)
@@ -26,20 +39,22 @@ func makeFile(fileName string, data string) {
 }
 
 func makeKubernetesSecret(secretName string, secret map[string]string) {
-	template := `apiVersion: v1
-kind: Secret
-metadata:
-  name: %s
-type: Opaque
-stringData:
-`
-	s := fmt.Sprintf(template, secretName)
-
-	for k, v := range secret {
-		s += fmt.Sprintf("  %s: %s", k, v)
+	res := KubernetesResource{
+		ApiVersion: "v1",
+		Kind:       "Secret",
+		Metadata: kubernetesMetaData{
+			Name: secretName,
+		},
+		Type:       "Opaque",
+		StringData: secret,
 	}
 
-	makeFile(secretName+".yaml", s)
+	d, err := yaml.Marshal(&res)
+	if err != nil {
+		log.Fatal("Marshal error: " + err.Error())
+	}
+
+	makeFile(secretName+".yaml", string(d))
 }
 
 func makeDotEnv(secretName string, secret map[string]string) {
