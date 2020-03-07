@@ -8,7 +8,11 @@ import (
 )
 
 type Info struct {
-	Version string
+	AppName     string
+	Description string
+	Version     string
+	AuthorName  string
+	AuthorEmail string
 }
 
 func Initialize(info *Info) {
@@ -17,13 +21,13 @@ func Initialize(info *Info) {
 	var file string
 
 	app := cli.NewApp()
-	app.Name = "secvault"
+	app.Name = info.AppName
+	app.Description = info.Description
 	app.Version = info.Version
-	app.Usage = "simple cli tool to easily manage sensitive environment variable using AWS Secrets Manager"
 	app.Authors = []*cli.Author{
 		&cli.Author{
-			Name:  "ClaudeSeo",
-			Email: "ehdaudtj@gmail.com",
+			Name:  info.AuthorName,
+			Email: info.AuthorEmail,
 		},
 	}
 
