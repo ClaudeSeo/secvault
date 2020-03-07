@@ -14,6 +14,7 @@ type Info struct {
 func Initialize(info *Info) {
 	var secretName string
 	var outputType string
+	var file string
 
 	app := cli.NewApp()
 	app.Name = "secvault"
@@ -23,19 +24,6 @@ func Initialize(info *Info) {
 		&cli.Author{
 			Name:  "ClaudeSeo",
 			Email: "ehdaudtj@gmail.com",
-		},
-	}
-
-	flags := []cli.Flag{
-		&cli.StringFlag{
-			Name:        "secret-name",
-			Usage:       "Secrest Name",
-			Destination: &secretName,
-		},
-		&cli.StringFlag{
-			Name:        "output-type",
-			Usage:       "Output Type (null, dotenv, kubernetes, json)",
-			Destination: &outputType,
 		},
 	}
 
@@ -51,9 +39,40 @@ func Initialize(info *Info) {
 		&cli.Command{
 			Name:  "get",
 			Usage: "Get environment variable stored in Secrets Manager",
-			Flags: flags,
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:        "secret-name",
+					Usage:       "Secrest Name",
+					Destination: &secretName,
+				},
+				&cli.StringFlag{
+					Name:        "output-type",
+					Usage:       "Output Type (support: dotenv, kubernetes, json)",
+					Destination: &outputType,
+				},
+			},
 			Action: func(ctx *cli.Context) error {
 				Get(secretName, outputType)
+				return nil
+			},
+		},
+		&cli.Command{
+			Name:  "put",
+			Usage: "Put environment variable to Secrets Manager",
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:        "secret-name",
+					Usage:       "Secrest Name",
+					Destination: &secretName,
+				},
+				&cli.StringFlag{
+					Name:        "file",
+					Usage:       "File Path (support: json)",
+					Destination: &file,
+				},
+			},
+			Action: func(ctx *cli.Context) error {
+				Put(secretName, file)
 				return nil
 			},
 		},

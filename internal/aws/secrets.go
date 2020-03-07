@@ -111,3 +111,85 @@ func (c *Cloud) ListSecrets(ctx context.Context) []Secret {
 
 	return secrets
 }
+
+func (c *Cloud) CreateSecret(ctx context.Context, secretName string) {
+	payload := secretsmanager.CreateSecretInput{
+		SecretString: aws.String("{\"created\": \"success\"}"),
+		Name:         aws.String(secretName),
+		Description:  aws.String("Created by secvault"),
+		Tags: []secretsmanager.Tag{
+			{
+				Key:   aws.String("SecretName"),
+				Value: aws.String(secretName),
+			},
+		},
+	}
+	req := c.secrets.CreateSecretRequest(&payload)
+	_, err := req.Send(ctx)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case secretsmanager.ErrCodeInvalidParameterException:
+				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
+			case secretsmanager.ErrCodeInvalidRequestException:
+				fmt.Println(secretsmanager.ErrCodeInvalidRequestException, aerr.Error())
+			case secretsmanager.ErrCodeLimitExceededException:
+				fmt.Println(secretsmanager.ErrCodeLimitExceededException, aerr.Error())
+			case secretsmanager.ErrCodeEncryptionFailure:
+				fmt.Println(secretsmanager.ErrCodeEncryptionFailure, aerr.Error())
+			case secretsmanager.ErrCodeResourceExistsException:
+				fmt.Println(secretsmanager.ErrCodeResourceExistsException, aerr.Error())
+			case secretsmanager.ErrCodeResourceNotFoundException:
+				fmt.Println(secretsmanager.ErrCodeResourceNotFoundException, aerr.Error())
+			case secretsmanager.ErrCodeMalformedPolicyDocumentException:
+				fmt.Println(secretsmanager.ErrCodeMalformedPolicyDocumentException, aerr.Error())
+			case secretsmanager.ErrCodeInternalServiceError:
+				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
+			case secretsmanager.ErrCodePreconditionNotMetException:
+				fmt.Println(secretsmanager.ErrCodePreconditionNotMetException, aerr.Error())
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+	}
+
+	return
+}
+
+func (c *Cloud) PutSecretValue(ctx context.Context, secretName string, data string) {
+	payload := secretsmanager.PutSecretValueInput{
+		SecretId:     aws.String(secretName),
+		SecretString: aws.String(data),
+	}
+
+	req := c.secrets.PutSecretValueRequest(&payload)
+	_, err := req.Send(ctx)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case secretsmanager.ErrCodeInvalidParameterException:
+				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
+			case secretsmanager.ErrCodeInvalidRequestException:
+				fmt.Println(secretsmanager.ErrCodeInvalidRequestException, aerr.Error())
+			case secretsmanager.ErrCodeLimitExceededException:
+				fmt.Println(secretsmanager.ErrCodeLimitExceededException, aerr.Error())
+			case secretsmanager.ErrCodeEncryptionFailure:
+				fmt.Println(secretsmanager.ErrCodeEncryptionFailure, aerr.Error())
+			case secretsmanager.ErrCodeResourceExistsException:
+				fmt.Println(secretsmanager.ErrCodeResourceExistsException, aerr.Error())
+			case secretsmanager.ErrCodeResourceNotFoundException:
+				fmt.Println(secretsmanager.ErrCodeResourceNotFoundException, aerr.Error())
+			case secretsmanager.ErrCodeInternalServiceError:
+				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+	}
+
+	return
+}
