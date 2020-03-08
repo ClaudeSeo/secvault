@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/claudeseo/secvault/cli"
+	"github.com/claudeseo/secvault/internal/cli"
 )
 
 func main() {
