@@ -11,16 +11,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type kubernetesMetaData struct {
-	Name string `yaml:"name"`
-}
-
 type KubernetesResource struct {
-	ApiVersion string             `yaml:"apiVersion"`
-	Kind       string             `yaml:"kind"`
-	Metadata   kubernetesMetaData `yaml:"metadata"`
-	Type       string             `yaml:"type"`
-	StringData map[string]string  `yaml:"stringData"`
+	ApiVersion string `yaml:"apiVersion"`
+	Kind       string `yaml:"kind"`
+	Metadata   struct {
+		Name string `yaml:"name"`
+	} `yaml:"metadata"`
+	Type       string            `yaml:"type"`
+	StringData map[string]string `yaml:"stringData"`
 }
 
 func makeFile(fileName string, data string) {
@@ -42,12 +40,10 @@ func makeKubernetesSecret(secretName string, secret map[string]string) {
 	res := KubernetesResource{
 		ApiVersion: "v1",
 		Kind:       "Secret",
-		Metadata: kubernetesMetaData{
-			Name: secretName,
-		},
 		Type:       "Opaque",
 		StringData: secret,
 	}
+	res.Metadata.Name = secretName
 
 	d, err := yaml.Marshal(&res)
 	if err != nil {
