@@ -76,17 +76,21 @@ func printSecret(secret map[string]string) {
 	}
 }
 
-func Get(secretName string, outputType string) {
+func validateGetParameter(secretName string, fileType string) {
 	if secretName == "" {
 		log.Fatal("secretName is required. Set --secret-name flag.")
 	}
 
-	if outputType != "" &&
-		outputType != "kubernetes" &&
-		outputType != "json" &&
-		outputType != "dotenv" {
-		log.Fatal("outputType is not allowd. [" + outputType + "]")
+	if fileType != "" &&
+		fileType != "kubernetes" &&
+		fileType != "json" &&
+		fileType != "dotenv" {
+		log.Fatal("fileType is not allowd. [" + fileType + "]")
 	}
+}
+
+func Get(secretName string, fileType string) {
+	validateGetParameter(secretName, fileType)
 
 	c := aws.New()
 	describe, err := c.DescribeSecret(context.Background(), secretName)
@@ -105,7 +109,7 @@ func Get(secretName string, outputType string) {
 	if err != nil {
 		log.Fatalf("Unable to find the %s secrets\nError: %s", secretName, err.Error())
 	}
-	switch outputType {
+	switch fileType {
 	case "kubernetes":
 		makeKubernetesSecret(secName, secret)
 		break

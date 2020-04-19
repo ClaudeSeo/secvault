@@ -17,8 +17,8 @@ type Info struct {
 
 func Initialize(info *Info) {
 	var secretName string
-	var outputType string
 	var file string
+	var fileType string
 
 	app := cli.NewApp()
 	app.Name = info.AppName
@@ -50,13 +50,13 @@ func Initialize(info *Info) {
 					Destination: &secretName,
 				},
 				&cli.StringFlag{
-					Name:        "output-type",
-					Usage:       "Output Type (support: dotenv, kubernetes, json)",
-					Destination: &outputType,
+					Name:        "type",
+					Usage:       "Output File Type (support: dotenv, kubernetes, json)",
+					Destination: &fileType,
 				},
 			},
 			Action: func(ctx *cli.Context) error {
-				Get(secretName, outputType)
+				Get(secretName, fileType)
 				return nil
 			},
 		},
@@ -71,12 +71,17 @@ func Initialize(info *Info) {
 				},
 				&cli.StringFlag{
 					Name:        "file",
-					Usage:       "File Path (support: json)",
+					Usage:       "File Path",
 					Destination: &file,
+				},
+				&cli.StringFlag{
+					Name:        "type",
+					Usage:       "Input File Type (support: dotenv, json)",
+					Destination: &fileType,
 				},
 			},
 			Action: func(ctx *cli.Context) error {
-				Put(secretName, file)
+				Put(secretName, file, fileType)
 				return nil
 			},
 		},

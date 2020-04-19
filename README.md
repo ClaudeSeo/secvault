@@ -22,12 +22,12 @@ $ secvault list
 Get Environment variable 
 
 ```bash
-$ secvault get --secret-name {SECRET_NAME}
+$ secvault get --secret-name {SECRET_NAME} --type {dotenv | kubernetes | json}
 ```
 
 
 Put Environment variable
 
 ```bash
-$ secvault put --secret-name {SECRET_NAME} --file {JSON_FILE_PATH}
+$ secvault put --secret-name {SECRET_NAME} --file {FILE_PATH} --type {dotenv | json}
 ```
